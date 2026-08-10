@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Extraire le projet
-        run: unzip -o MarcheGo_PROJET_FIXE.zip -d .
+        run: ZIP=$(find . -maxdepth 1 -type f -name '*.zip' | head -n 1); unzip -o "$ZIP" -d .
 
       - name: Installer Java
         uses: actions/setup-java@v4

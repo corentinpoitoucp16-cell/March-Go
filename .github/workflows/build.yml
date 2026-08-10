@@ -1,0 +1,32 @@
+name: Construire MarcheGo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extraire le projet
+        run: unzip -o MarcheGo_PROJET.zip -d .
+
+      - name: Installer Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Installer Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Construire l'APK
+        run: gradle :app:assembleDebug
+
+      - name: Récupérer l'APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: MarcheGo-APK
+          path: app/build/outputs/apk/debug/app-debug.apk

@@ -1,0 +1,10 @@
+<resources>
+    <style name="Theme.MarcheGo" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">@color/green</item>
+        <item name="android:navigationBarColor">@color/cream</item>
+        <item name="android:statusBarColor">@color/green</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">@color/cream</item>
+    </style>
+</resources>

@@ -1,0 +1,8 @@
+[
+  {"nom":"Marché de Vihiers","ville":"Vihiers","departement":"Maine-et-Loire","lat":47.1465,"lon":-0.5312,"jours":"Samedi","type":"Marché"},
+  {"nom":"Marché de Cholet","ville":"Cholet","departement":"Maine-et-Loire","lat":47.0590,"lon":-0.8798,"jours":"Samedi","type":"Marché"},
+  {"nom":"Marché de Saumur","ville":"Saumur","departement":"Maine-et-Loire","lat":47.2590,"lon":-0.0781,"jours":"Samedi","type":"Marché"},
+  {"nom":"Marché de La Tranche-sur-Mer","ville":"La Tranche-sur-Mer","departement":"Vendée","lat":46.3440,"lon":-1.4370,"jours":"Mardi","type":"Marché"},
+  {"nom":"Marché de La Rochelle","ville":"La Rochelle","departement":"Charente-Maritime","lat":46.1603,"lon":-1.1511,"jours":"Tous les jours","type":"Marché"},
+  {"nom":"Marché de Niort","ville":"Niort","departement":"Deux-Sèvres","lat":46.3239,"lon":-0.4649,"jours":"Samedi","type":"Marché"}
+]

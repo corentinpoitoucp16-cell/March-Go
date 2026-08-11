@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MarchéGo</title>
+<style>
+:root{--green:#175b37;--green2:#2d8b25;--orange:#f46a19;--cream:#f7f3e7;--ink:#102d24}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);font-family:Arial,sans-serif;color:var(--ink)}
+header{padding:28px 20px 14px;text-align:center;background:linear-gradient(#fdfbf5,#f7f3e7)}
+.logo{font-size:44px;font-weight:900;letter-spacing:-2px}.logo b{color:var(--green)}.logo span{color:var(--orange)}
+.tag{font-size:20px;line-height:1.15;font-style:italic;margin:4px 0 18px}
+.search{background:#fff;border-radius:28px;padding:15px 18px;box-shadow:0 6px 18px #00000012;display:flex;gap:10px;align-items:center}
+.search input{border:0;outline:0;font-size:16px;flex:1}.gps{margin-top:12px;width:100%;border:0;border-radius:28px;background:var(--green2);color:white;padding:15px;font-size:17px;font-weight:800}
+h2{text-align:center;font-size:28px;font-style:italic;margin:18px 0 14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 14px 92px}
+.card{min-height:130px;border-radius:22px;background:#fff;padding:18px 14px;box-shadow:0 5px 16px #0000000e;position:relative;overflow:hidden}
+.card .ico{font-size:31px}.card strong{display:block;font-size:20px;margin-top:5px}.card small{font-size:15px;color:#65746d}
+.night{background:#182746;color:#fff}.night small{color:#d7e4ff}
+.sea{background:#eef7ff}.fav{background:#fff0f6}
+.results{padding:0 14px 92px}.result{background:white;border-radius:18px;margin:10px 0;padding:14px;box-shadow:0 4px 14px #00000010}
+.result strong{font-size:18px}.muted{color:#68746e;font-size:14px;margin-top:4px}.distance{float:right;color:var(--green);font-weight:800}
+nav{position:fixed;bottom:0;left:0;right:0;height:78px;background:#0f5938;border-radius:28px 28px 0 0;display:flex;justify-content:space-around;align-items:center;box-shadow:0 -6px 20px #0003;z-index:5}
+nav button{background:none;border:0;color:white;font-size:12px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px}nav .nicon{font-size:28px}
+#toast{position:fixed;left:20px;right:20px;bottom:92px;background:#102d24;color:#fff;padding:13px;border-radius:14px;text-align:center;display:none;z-index:10}
+@media(min-width:700px){body{max-width:600px;margin:auto}.grid{gap:16px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">📍 <b>Marché</b><span>Go</span></div>
+  <div class="tag">Tous les marchés,<br>près de vous ou partout en France.</div>
+  <div class="search">🔎 <input id="q" placeholder="Tapez une ville, un village ou un code postal"></div>
+  <button class="gps" onclick="useGPS()">📍 Utiliser ma position à la place</button>
+</header>
+<main id="home">
+  <h2>✨ Qu’est-ce que vous cherchez ? ✨</h2>
+  <section class="grid">
+    <div class="card" onclick="showAll()"><div class="ico">🧺</div><strong>Tous les marchés</strong><small>Explorer</small></div>
+    <div class="card" onclick="filterType('Fruits & légumes')"><div class="ico">🥕</div><strong>Fruits & légumes</strong><small>Produits frais</small></div>
+    <div class="card" onclick="filterType('Producteurs')"><div class="ico">🌱</div><strong>Producteurs</strong><small>Direct & local</small></div>
+    <div class="card" onclick="filterType('Gourmands')"><div class="ico">🍴</div><strong>Gourmands</strong><small>Restauration</small></div>
+    <div class="card" onclick="filterType('Artisans')"><div class="ico">🎨</div><strong>Artisans</strong><small>Créateurs</small></div>
+    <div class="card night" onclick="filterNight()"><div class="ico">🌙</div><strong>Marchés nocturnes</strong><small>Soirées</small></div>
+    <div class="card sea" onclick="filterSea()"><div class="ico">🌊</div><strong>Bord de mer</strong><small>Littoral</small></div>
+    <div class="card fav" onclick="showFavorites()"><div class="ico">💗</div><strong>Mes favoris</strong><small>Mes marchés</small></div>
+  </section>
+</main>
+<section id="results" class="results" style="display:none"></section>
+<div id="toast"></div>
+<nav>
+ <button onclick="goHome()"><span class="nicon">🏠</span>Accueil</button>
+ <button onclick="focusSearch()"><span class="nicon">🔎</span>Rechercher</button>
+ <button onclick="showFavorites()"><span class="nicon">💗</span>Favoris</button>
+ <button onclick="info()"><span class="nicon">ℹ️</span>Infos</button>
+</nav>
+<script>
+let markets=[], favorites=JSON.parse(localStorage.getItem('fav')||'[]');
+fetch('marches.json').then(r=>r.json()).then(x=>{markets=x; render(markets)}).catch(()=>{});
+const q=document.getElementById('q');
+q.addEventListener('input',()=>{let s=q.value.toLowerCase().trim(); if(!s){goHome();return} showResults(markets.filter(m=>(m.nom+' '+m.ville+' '+m.departement+' '+m.jours).toLowerCase().includes(s)))});
+function render(list){showResults(list)}
+function showResults(list){document.getElementById('home').style.display='none';let r=document.getElementById('results');r.style.display='block';r.innerHTML='<h2>📍 Marchés trouvés</h2>'+list.map(m=>`<div class="result"><span class="distance" id="d${m.nom.replace(/\W/g,'')}"></span><strong>${m.nom}</strong><div class="muted">${m.ville} · ${m.departement}</div><div class="muted">📅 ${m.jours}</div><div style="margin-top:8px"><button onclick="toggleFav('${m.nom.replace(/'/g,"\\'")}')" style="border:0;background:#fff0f6;border-radius:12px;padding:8px">💗 Favori</button></div></div>`).join('') || '<div class="result">Aucun marché trouvé.</div>'}
+function showAll(){showResults(markets)}
+function filterType(t){showResults(markets)}
+function filterNight(){showResults(markets)}
+function filterSea(){showResults(markets)}
+function showFavorites(){showResults(markets.filter(m=>favorites.includes(m.nom)))}
+function toggleFav(n){if(favorites.includes(n))favorites=favorites.filter(x=>x!==n);else favorites.push(n);localStorage.setItem('fav',JSON.stringify(favorites));toast('Favoris mis à jour ❤️')}
+function goHome(){document.getElementById('results').style.display='none';document.getElementById('home').style.display='block';q.value=''}
+function focusSearch(){q.focus();window.scrollTo({top:0,behavior:'smooth'})}
+function info(){toast('MarchéGo — Tous les marchés près de vous ou partout en France.')}
+function toast(t){let x=document.getElementById('toast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',2200)}
+function useGPS(){
+ navigator.geolocation.getCurrentPosition(pos=>{
+   const {latitude:a,longitude:b}=pos.coords;
+   const sorted=[...markets].sort((x,y)=>dist(a,b,x.lat,x.lon)-dist(a,b,y.lat,y.lon));
+   showResults(sorted); toast('📍 Position trouvée — marchés classés par distance');
+ },()=>toast('Impossible d’obtenir votre position. Vérifiez l’autorisation GPS.'));
+}
+function dist(a,b,c,d){const R=6371,rad=Math.PI/180,da=(c-a)*rad,db=(d-b)*rad;const x=Math.sin(da/2)**2+Math.cos(a*rad)*Math.cos(c*rad)*Math.sin(db/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
+</script>
+</body>
+</html>

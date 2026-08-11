@@ -1,4 +1,4 @@
-name: Installer MarcheGo V2
+name: Installer MarchéGo V2
 
 on:
   workflow_dispatch:
@@ -14,9 +14,14 @@ jobs:
       - name: Récupérer le dépôt
         uses: actions/checkout@v4
 
-      - name: Décompresser MarcheGo V2
+      - name: Trouver et décompresser le ZIP
         run: |
-          unzip -o MarcheGo_v2_corrige.zip -d /tmp/marchego
+          ZIP=$(find . -maxdepth 1 -type f -name "*.zip" | head -n 1)
+          echo "ZIP trouvé : $ZIP"
+          unzip -o "$ZIP" -d /tmp/marchego
+
+      - name: Installer les fichiers MarchéGo
+        run: |
           cp -r /tmp/marchego/app .
           cp -r /tmp/marchego/scripts .
           cp /tmp/marchego/build.gradle .
@@ -25,12 +30,14 @@ jobs:
           cp /tmp/marchego/README.md .
 
       - name: Supprimer le ZIP
-        run: rm MarcheGo_v2_corrige.zip
+        run: |
+          ZIP=$(find . -maxdepth 1 -type f -name "*.zip" | head -n 1)
+          rm "$ZIP"
 
       - name: Enregistrer les modifications
         run: |
-          git config user.name "MarcheGo"
+          git config user.name "MarchéGo"
           git config user.email "actions@github.com"
           git add .
-          git commit -m "Installation MarcheGo V2" || exit 0
+          git commit -m "Installation MarchéGo V2" || exit 0
           git push

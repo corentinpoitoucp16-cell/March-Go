@@ -23,7 +23,6 @@ jobs:
       - name: Installer les fichiers MarchéGo
         run: |
           cp -r /tmp/marchego/app .
-          cp -r /tmp/marchego/scripts .
           cp /tmp/marchego/build.gradle .
           cp /tmp/marchego/gradle.properties .
           cp /tmp/marchego/settings.gradle .

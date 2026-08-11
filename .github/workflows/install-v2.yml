@@ -1,0 +1,33 @@
+name: Installer MarchéGo V2
+
+on:
+  workflow_dispatch:
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Décompresser MarchéGo V2
+        run: |
+          unzip -o MarcheGo_v2_corrige.zip -d /tmp/marchego
+          cp -r /tmp/marchego/app .
+          cp -r /tmp/marchego/scripts .
+          cp /tmp/marchego/build.gradle .
+          cp /tmp/marchego/gradle.properties .
+          cp /tmp/marchego/settings.gradle .
+          cp /tmp/marchego/README.md .
+
+      - name: Supprimer le ZIP
+        run: rm MarcheGo_v2_corrige.zip
+
+      - name: Enregistrer les modifications
+        run: |
+          git config user.name "MarchéGo"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Installation MarchéGo V2" || exit 0
+          git push
